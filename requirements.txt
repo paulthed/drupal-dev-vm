@@ -2,7 +2,7 @@ geerlingguy.firewall
 geerlingguy.git
 geerlingguy.apache
 geerlingguy.mysql
-geerlingguy.php
+paulthed.php
 geerlingguy.php-pecl
 geerlingguy.php-mysql
 geerlingguy.php-xdebug
