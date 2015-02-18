@@ -1,7 +1,7 @@
 ---
 # Vagrant hostname and IP configuration.
-vagrant_hostname: drupaltest.dev
-vagrant_ip: 192.168.88.88
+vagrant_hostname: ekb.dev
+vagrant_ip: 192.168.88.89
 
 # A list of synced folders, with the keys 'local_path', 'destination', and 'id'.
 vagrant_synced_folders:
@@ -43,7 +43,7 @@ drupal_major_version: 7
 # The path where Drupal will be downloaded and installed.
 drupal_core_path: "/var/www/drupal"
 
-drupal_domain: "drupaltest.dev"
+drupal_domain: "ekb.dev"
 drupal_site_name: "Drupal Test Site"
 drupal_install_profile: standard
 
