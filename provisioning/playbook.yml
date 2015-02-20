@@ -26,27 +26,28 @@
       role: paulthed.php-memcached,
       when: '"memcached" in installed_extras'
     }
-    - {
-      role: paulthed.php-xdebug,
-      when: '"xdebug" in installed_extras'
-    }
-    - {
-      role: paulthed.php-xhprof,
-      when: '"xhprof" in installed_extras'
-    }
-    - {
-      role: paulthed.phpmyadmin,
-      when: '"phpmyadmin" in installed_extras'
-    }
-    - {
-      role: geerlingguy.daemonize,
-      when: '"mailhog" in installed_extras'
-    }
-    - {
-      role: geerlingguy.mailhog,
-      when: '"mailhog" in installed_extras'
-    }
+    # - {
+    #   role: paulthed.php-xdebug,
+    #   when: '"xdebug" in installed_extras'
+    # }
+    # - {
+    #   role: paulthed.php-xhprof,
+    #   when: '"xhprof" in installed_extras'
+    # }
+    # - {
+    #   role: paulthed.phpmyadmin,
+    #   when: '"phpmyadmin" in installed_extras'
+    # }
+    # - {
+    #   role: geerlingguy.daemonize,
+    #   when: '"mailhog" in installed_extras'
+    # }
+    # - {
+    #   role: geerlingguy.mailhog,
+    #   when: '"mailhog" in installed_extras'
+    # }
 
   tasks:
     - include: tasks/www.yml
     - include: tasks/drupal.yml
+    - include: tasks/ekb.yml
