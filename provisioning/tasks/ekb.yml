@@ -1,0 +1,26 @@
+---
+- name: Delete drupal default install sites/all folder
+  command: >
+    rm -rf /var/www/drupal/sites/all/
+
+- name: Clone sites/all folder from paulthed Github.
+  git: >
+    repo=https://github.com/ekbdinger/ekb_prod.git 
+    dest=/var/www/drupal/sites/all
+    force=yes
+
+- name: Set permissions properly on sites/all (ekb_prod) directory
+  file:
+    path: /var/www/drupal/sites/all
+    mode: 0775
+    state: directory
+    recurse: yes
+    group: www-data
+    owner: vagrant
+
+- name: Clone drush aliases
+  git: repo=https://github.com/paulthed/drush_aliases dest=/home/vagrant/.drush/drush_aliases
+
+- name: Copy drush alises to right location
+  command: >
+    cp /home/vagrant/.drush/drush_aliases/ekb.aliases.drushrc.php /home//vagrant/.drush/
