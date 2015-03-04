@@ -1,0 +1,183 @@
+---
+- name: Install Java using apt-get
+  apt: name=java7-jdk state=present
+
+- name: Run apt-get update if last one was less than 3600 seconds ago
+  apt: update_cache=yes cache_valid_time=3600
+
+# in the future this could use with_items
+- name: Install Tomcat7 using apt
+  apt: name=tomcat7 state=present
+
+- name: Install Tomcat7 using admin
+  apt: name=tomcat7-admin state=present
+
+- name: Restart Tomcat7
+  service: name=tomcat7 state=restarted
+
+# future, lineinfile module?
+- name: Change port from 8080 to 8983
+  command: sudo sed -i s/8080/8983/g /var/lib/tomcat7/conf/server.xml
+
+- name: Restart Tomcat7 after port change
+  service: name=tomcat7 state=restarted
+
+- name: Clone tomcat-users.xml for tomcat user admin
+  git: >
+    repo=https://github.com/paulthed/solr_tomcat_users
+    dest=/home/vagrant/solr_tomcat_users
+    force=yes
+
+- name: Copy tomcat-users.xml to the right location
+  command: sudo cp /home/vagrant/solr_tomcat_users/tomcat-users.xml /var/lib/tomcat7/ 
+
+- name: Restart Tomcat7
+  service: name=tomcat7 state=restarted
+
+- name: Download Solr
+  get_url: url=http://apache.mirrors.pair.com/lucene/solr/4.7.2/solr-4.7.2.tgz dest=/home/vagrant/solr-4.7.2.tgz
+
+- name: Untar the solr tar ball
+  command: tar -xzf /home/vagrant/solr-4.7.2.tgz
+
+- name: Copy Solr Library files 
+  command: sudo rsync -avzh /home/vagrant/solr-4.7.2/example/lib/ext/ /usr/share/tomcat7/lib/
+
+# this is what I'm doing below, do I need to creat teh new directory?
+# command: >
+  #   mkdir -p /usr/local/tomcat7/lib
+  #   sudo rsync -avzh ~/solr-4.7.2/dist/solrj-lib/ /usr/local/tomcat7/lib/
+
+- name: Create the /usr/local/tomcat7/lib directory
+  file: path=/usr/local/tomcat7/lib state=directory
+
+#  command: sudo mkdir -p /usr/local/tomcat7/lib creates=/usr/local/tomcat7/lib
+
+- name: Copy the Java libraries from solr/dist/solrrj-lib/*
+  shell: >
+    cp -r {{ item.src }} {{ item.dest }}
+  with_items:
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/commons-io-2.1.jar,
+      dest: /usr/local/tomcat7/lib/commons-io-2.1.jar,
+      creates: /usr/local/tomcat7/lib/commons-io-2.1.jar
+    }
+
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/httpclient-4.3.1.jar,
+      dest: /usr/local/tomcat7/lib/httpclient-4.3.1.jar,
+      creates: /usr/local/tomcat7/lib/httpclient-4.3.1.jar
+    }
+
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/httpcore-4.3.jar,
+      dest: /usr/local/tomcat7/lib/httpcore-4.3.jar,
+      creates: /usr/local/tomcat7/lib/httpcore-4.3.jar
+    }
+  
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/httpmime-4.3.1.jar,
+      dest: /usr/local/tomcat7/lib/httpmime-4.3.1.jar,
+      creates: /usr/local/tomcat7/lib/httpmime-4.3.1.jar
+    }
+
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/jcl-over-slf4j-1.6.6.jar,
+      dest: /usr/local/tomcat7/lib/jcl-over-slf4j-1.6.6.jar,
+      creates: /usr/local/tomcat7/lib/jcl-over-slf4j-1.6.6.jar
+    }
+    
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/jul-to-slf4j-1.6.6.jar,
+      dest: /usr/local/tomcat7/lib/jul-to-slf4j-1.6.6.jar,
+      creates: /usr/local/tomcat7/lib/jul-to-slf4j-1.6.6.jar
+    }
+
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/log4j-1.2.16.jar,
+      dest: /usr/local/tomcat7/lib/log4j-1.2.16.jar,
+      creates: /usr/local/tomcat7/lib/log4j-1.2.16.jar
+    }
+    
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/noggit-0.5.jar,
+      dest: /usr/local/tomcat7/lib/noggit-0.5.jar,
+      creates: /usr/local/tomcat7/lib/noggit-0.5.jar
+    }
+    
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/slf4j-api-1.6.6.jar,
+      dest: /usr/local/tomcat7/lib/slf4j-api-1.6.6.jar,
+      creates: /usr/local/tomcat7/lib/slf4j-api-1.6.6.jar
+    }
+    
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/slf4j-log4j12-1.6.6.jar,
+      dest: /usr/local/tomcat7/lib/slf4j-log4j12-1.6.6.jar,
+      creates: /usr/local/tomcat7/lib/slf4j-log4j12-1.6.6.jar
+    }
+
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/wstx-asl-3.2.7.jar,
+      dest: /usr/local/tomcat7/lib/wstx-asl-3.2.7.jar,
+      creates: /usr/local/tomcat7/lib/wstx-asl-3.2.7.jar
+    }
+    
+    - {
+      src: /home/vagrant/solr-4.7.2/dist/solrj-lib/zookeeper-3.4.5.jar,
+      dest: /usr/local/tomcat7/lib/zookeeper-3.4.5.jar,
+      creates: /usr/local/tomcat7/lib/zookeeper-3.4.5.jar
+    }
+
+- name: Copy Solr WAR App file
+  command: sudo cp /home/vagrant/solr-4.7.2/dist/solr-4.7.2.war /var/lib/tomcat7/webapps/solr.war
+
+- name: Create Solr directory
+  file: path=/var/lib/tomcat7/solr state=directory
+
+- name: Copy sample config file from Solr
+  command: sudo cp -r /home/vagrant/solr-4.7.2/example/solr/collection1/conf/ /var/lib/tomcat7/solr/
+
+- name: Download the Drupal Apache solr module
+  get_url: url=http://ftp.drupal.org/files/projects/apachesolr-7.x-1.7.tar.gz dest=/home/vagrant/apachesolr-7.x-1.7.tar.gz
+
+- name: Unarchive the Drupal Solr module
+  unarchive: src=/home/vagrant/apachesolr-7.x-1.7.tar.gz dest=/home/vagrant copy=no
+
+  # command: <
+  #   wget http://ftp.drupal.org/files/projects/apachesolr-7.x-1.7.tar.gz
+  #   tar xvf apachesolr-7.x-1.7.tar.gz
+
+- name: Synchronize the solr config files (for drupal) with your solr config
+  command: sudo rsync -av apachesolr/solr-conf/solr-4.x/ /var/lib/tomcat7/solr/conf/
+  
+- name: Create a core definition file to tell Solr which cores are available
+  git: >
+    repo=https://github.com/paulthed/solr_xml
+    dest=/home/vagrant/solr_xml
+    force=yes
+
+- name: Copy solr.xml to the right location
+  command: >
+    sudo cp -r solr_xml/solr.xml /var/lib/tomcat7/solr/solr.xml
+
+#    sudo mkdir /var/lib/tomcat7/solr/core1
+- name: Create Drupal core directory
+  file: path=/var/lib/tomcat7/solr/core1 state=directory
+ 
+- name: Copy solr/conf files to the core
+  command: >
+    sudo cp -r /var/lib/tomcat7/solr/conf/ /var/lib/tomcat7/solr/core1/
+
+- name: Stop Tomcat
+  service: name=tomcat7 state=stopped
+
+
+# I think I can use the file module here in the future
+# command: sudo chown -R tomcat7:tomcat7 /var/lib/tomcat7/ 
+- name: Change permissions on the tomcat directory
+  file: owner=tomcat7 group=tomcat7 state=directory path=/var/lib/tomcat7/ recurse=yes
+
+- name: Start Tomcat
+  service: name=tomcat7 state=started
+
