@@ -6,10 +6,5 @@ paulthed.php
 paulthed.php-pecl
 paulthed.php-mysql
 paulthed.php-xdebug
-paulthed.php-xhprof
-paulthed.phpmyadmin
 paulthed.composer
 paulthed.drush
-geerlingguy.daemonize
-geerlingguy.mailhog
-paulthed.php-memcached

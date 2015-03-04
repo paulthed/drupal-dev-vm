@@ -10,7 +10,7 @@ It will install the following on an Ubuntu 14.04 linux VM:
   - PHP 5.5.x (configurable)
   - MySQL 5.5.x
   - Drush latest release (configurable)
-  - Drupal 6.x, 7.x, or 8.x.x (configurable)
+  - Drupal 6.x, 7.x, or 8.x.x (configurable, default is 7)
   - Optional (installed by default):
     - Memcached
     - XHProf, for profiling your code
@@ -27,7 +27,7 @@ There are a couple places where you can customize the VM for your needs:
   - `config.yml`: Contains variables like the VM domain name and IP address, PHP and MySQL configuration, etc.
   - `drupal.make.yml`: Contains configuration for the Drupal core version, modules, and patches that will be downloaded on Drupal's initial installation (more about [Drush make files](https://www.drupal.org/node/1432374)).
 
-If you want to switch from Drupal 8 (default) to Drupal 7 or 6 on the initial install, do the following:
+If you want to switch from Drupal 7 (default) to Drupal 8 or 6 on the initial install, do the following:
 
   1. Update the Drupal `version` and `core` inside the `drupal.make.yml` file.
   2. Update `drupal_major_version` inside `config.yml`.
@@ -56,7 +56,7 @@ Note: *If there are any errors during the course of running `vagrant up`, and it
 
 ### 3 - Configure your host machine to access the VM.
 
-  1. [Edit your hosts file](http://www.rackspace.com/knowledge_center/article/how-do-i-modify-my-hosts-file), adding the line `192.168.88.88  drupaltest.dev` so you can connect to the VM.
+  1. [Edit your hosts file](http://www.rackspace.com/knowledge_center/article/how-do-i-modify-my-hosts-file), adding the line `192.168.88.44  drupaltest.dev` so you can connect to the VM.
   2. Open your browser and access [http://drupaltest.dev/](http://drupaltest.dev/).
 
 ## Syncing folders
@@ -84,7 +84,7 @@ By default, this VM is set up so you can manage mysql databases on your own. The
     - MySQL Host: `127.0.0.1`
     - Username: `root`
     - Password: `root` (or whatever password you chose in `config.yml`)
-    - SSH Host: `192.168.88.88` (or whatever IP you chose in `config.yml`)
+    - SSH Host: `192.168.88.44` (or whatever IP you chose in `config.yml`)
     - SSH User: `vagrant`
     - SSH Key: (browse to your `~/.vagrant.d/` folder and choose `insecure_private_key`)
 
