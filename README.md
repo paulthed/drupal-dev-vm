@@ -134,3 +134,145 @@ You can override the default behavior of redirecting email to MailHog by editing
 ## About the Author
 
 [Jeff Geerling](http://jeffgeerling.com/), owner of [Midwestern Mac, LLC](http://www.midwesternmac.com/), created this project in 2014 so he could accelerate his Drupal core and contrib development workflow. This project, and others like it, are also featured as examples in Jeff's book, [Ansible for DevOps](https://leanpub.com/ansible-for-devops).
+
+
+---
+---
+
+# DOCUMENTATION RELATED TO EKB
+
+Insructions on how to use the https://github.com/paulthed/drupal-dev-vm/tree/ekbdev (ekbdev branch)
+
+## Create a Local Drupal Dev VM
+
+Follow instructions here:  [Drupal-Dev-VM (ekbdev)](https://github.com/paulthed/drupal-dev-vm/tree/ekbdev)
+
+Clone the Git repo and switch to the ekbdev branch
+
+```
+git clone https://github.com/paulthed/drupal-dev-vm.git <directory>
+cd <directory>
+git checkout --track origin/ekbdev  
+
+```
+
+## Copy config and drush.make
+
+Change the ip address and the hostname if I already have a local VM using this.
+
+```
+cp example.config.yml config.yml
+cp example.drupal.make.yml drupal.make.yml
+```
+
+## Run vagrant up
+
+Make sure you are in the directory with the Vagrant file, then run the command:  vagrant up
+
+If you have not downloaded the Vagrant box, this will take anywhere from 5-10 mins.
+
+If you downloaded the box previously, it should take around 5 mins
+
+
+## SSH onto the Vagrant Box
+
+go to directory with the vm
+```
+cd ~/VMS/<project name>
+vagrant ssh
+```
+
+## Github repo with sites/all folder
+
+[Git Repo: ekbdinger/ekb_prod](https://github.com/ekbdinger/ekb_prod)
+
+First, remove the existing sites/all folder
+
+```
+rm -rf /var/www/drupal/sites/all/
+```
+
+Second, clone the git repo.
+
+```
+cd /var/www/drupal/sites/
+git clone https://github.com/ekbdinger/ekb_prod.git all
+```
+
+Third, change the folder group owner
+```
+sudo chgrp -R www-data all/
+```
+
+## Create Drush Alias
+
+Create a local drush alias
+
+Location is:  vagrant@ekb:~/.drush$
+
+Alias filename is: ekb.aliases.drushrc.php 
+
+```
+cd ~/.drush/
+touch ekb.aliases.drushrc.php 
+```
+Add the code below to the ekb.aliases.drushrc.php file
+
+
+``` php
+<?php
+
+// Aliases for my drupal dev vm for local eKB dev work
+
+$aliases['ekbdev'] = array(
+  'uri' => 'localhost',
+  'root' => '/var/www/drupal',
+);
+
+?>
+```
+
+Just made this as a Gist
+[ekb_dev_alias gist](https://gist.github.com/paulthed/c288dd9bd875ab77e0bc)
+
+```
+git clone https://gist.github.com/c288dd9bd875ab77e0bc.git
+```
+
+TODO:  See if I can add the ssh key from the acquia server, so I can just do a sql-sync each time.
+  -How much time would that save? That might not be worth it.
+
+
+## Drush SQL import
+
+What directory do I place this in?
+
+**Host (OS X)**
+```
+cd ~/sites/drupal/ekb_acquia_test_backups
+```
+
+**Guest Machine**
+```
+cd /drupal/ekb_acquia_test_backups/
+```
+
+**Unzip the SQL backup**
+```
+gunzip backup-2015-02-18-23-11-ekb-24080152.sql.gz
+```
+TODO:  Will need to have a variable here, most recent backup?
+or can I do *, or a tab completion in a script?
+
+
+**Use Drush's sql-cli (sqlc) command to import the DB backup**
+```
+drush @ekbdev sqlc < backup-2015-02-18-23-11-ekb-24080152.sql
+```
+
+## TODO
+
+use drush sql-sync instead of the SQL Import if you have SSH access to the server.
+
+
+
